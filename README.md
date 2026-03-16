@@ -1,130 +1,152 @@
-# Classical-Cryptanalysis-Lab
+# Classical Cryptanalysis Lab - Cipher Decryption & AES Key Recovery
 
-## Overview
-This project analyzes and decrypts multiple classical cryptographic ciphers using both manual cryptanalysis techniques and automated tools. The lab focuses on identifying cipher types, applying decryption strategies, and using cryptographic tools to recover plaintext messages.
+A hands-on cryptanalysis lab decrypting classical ciphers using frequency analysis, pattern recognition, and automated tools - progressing from Caesar shifts to monoalphabetic substitution ciphers, and concluding with an AES brute-force key recovery challenge.
 
-The exercises progress from basic Caesar ciphers to more complex monoalphabetic substitution ciphers, demonstrating how classical encryption methods can be broken using frequency analysis, pattern recognition, and cryptographic software tools.
-
-Additionally, the lab includes a programming challenge involving AES encryption, where the correct key was identified through a brute-force approach.
+---
 
 ## Objectives
-The objectives of this lab were to:
-- Identify different types of classical ciphers
-- Apply systematic cryptanalysis techniques
-- Use cryptographic tools to assist with decryption
-- Analyze ciphertext patterns and frequency distributions
-- Recover plaintext messages from encrypted text
-- Demonstrate understanding of classical encryption weaknesses
+
+- Identify cipher types from ciphertext characteristics
+- Apply systematic cryptanalysis techniques (frequency analysis, IC, pattern recognition)
+- Decrypt Caesar, Beaufort, and monoalphabetic substitution ciphers
+- Recover an AES encryption key through brute-force and binary inspection
+
+---
 
 ## Tools Used
-- CrypTool 2
-- dcode.fr
-- Hexdump
-- Strings
-- OpenSSL
-- Frequency analysis tools
+
+| Tool | Purpose |
+|---|---|
+| CrypTool 2 | Automated cipher analysis and substitution mapping |
+| dcode.fr | Online cipher identification and decryption |
+| OpenSSL | AES decryption and key testing |
+| hexdump / file / strings | Binary inspection and PE file analysis |
+| Frequency analysis tools | Letter distribution and index of coincidence |
+
+---
 
 ## Cipher Decryption Exercises
-**Basic Level - Caesar Cipher (1-6)**
-The first set of ciphertexts used Caesar shift ciphers, where each letter is shifted by a fixed number in the alphabet.
 
-Using frequency analysis and brute-force shift testing, the correct plaintext messages were recovered.
-| Cipher # | Cipher Type     | Key (Shift) | Tool Used     |
-| -------- | --------------- | ----------- | ------------- |
-| 1        | Caesar Cipher   | 23          | CrypTool      |
-| 2        | Caesar Cipher   | 23          | CrypTool      |
-| 3        | Caesar Cipher   | 23          | CrypTool      |
-| 4        | Caesar Cipher   | 25          | CrypTool      |
-| 5        | Caesar Cipher   | 25          | CrypTool      |
-| 6        | Beaufort Cipher | —           | Beaufort Tool |
+### Level 1 - Caesar Ciphers (1-6)
 
-These examples demonstrate how simple substitution-based ciphers are vulnerable to brute-force attacks due to the small keyspace.
+Caesar ciphers shift each letter by a fixed value. With only 25 possible keys, brute-force combined with frequency analysis trivially recovers the plaintext.
 
-**Intermediate Level - Caesar Cipher with Longer Text (7-9)**
-The second set contained longer ciphertext messages encrypted with Caesar shifts.
-| Cipher # | Shift | Result                 |
-| -------- | ----- | ---------------------- |
-| 7        | 5     | Decrypted successfully |
-| 8        | 20    | Decrypted successfully |
-| 9        | 13    | Decrypted successfully |
+| Cipher | Type | Key (Shift) | Tool |
+|---|---|---|---|
+| 1 | Caesar | 23 | CrypTool 2 |
+| 2 | Caesar | 23 | CrypTool 2 |
+| 3 | Caesar | 23 | CrypTool 2 |
+| 4 | Caesar | 25 | CrypTool 2 |
+| 5 | Caesar | 25 | CrypTool 2 |
+| 6 | Beaufort | - | Beaufort Tool |
 
-Even though the ciphertext appeared more complex, the underlying encryption was still a simple rotational substitution, making it easy to break.
+**Example decryption:**
 
-**Example**
+```
+Ciphertext:  QEBXO OJVFP LKQEB JLSB
+Method:      Caesar Cipher, Shift 23
+Plaintext:   THE ARMY IS ON THE MOVE
+```
 
-Ciphertext:
-QEBXO OJVFP LKQEB JLSB
+![Cryptanalysis Tool - Caesar Decryption](01_Cryptanalysis_tool.png)
 
-Method:
-Caesar Cipher (Shift 23)
+---
 
-Plaintext:
-THE ARMY IS ON THE MOVE
-**Advanced Level - Monoalphabetic Substitution (10-14)**
-The final group of ciphertexts used monoalphabetic substitution ciphers, which require letter mapping rather than simple shifts.
+### Level 2 - Caesar Ciphers with Longer Text (7-9)
 
-**Decryption Process**
-1. Frequency analysis was performed to identify common English letters.
-2. Letter mapping was gradually constructed using:
-      - common digraphs (TH, HE)
-      - trigrams (THE, ING)
-      - word pattern recognition
-3. CrypTool’s automatic substitution analyzer generated candidate mappings.
-4. The mappings were refined manually using known English word patterns.
-This approach allowed the ciphertext instructions to be reconstructed into a coherent plaintext narrative describing the overall puzzle-solving process.
+Longer ciphertext provides more statistical signal, making frequency analysis even more reliable despite apparent complexity.
 
-## AES Programming Puzzle
-The final challenge involved decrypting a file protected with AES encryption.
-**Key Discovery**
-The AES key was partially known, with the final byte missing.
+| Cipher | Shift | Result |
+|---|---|---|
+| 7 | 5 | Decrypted successfully |
+| 8 | 20 | Decrypted successfully |
+| 9 | 13 | Decrypted successfully |
 
-The correct key was recovered by brute-forcing the final byte and checking each decrypted output for the Windows PE file header ("MZ").
+![Cryptanalysis Tool - Longer Ciphertext](02_Cryptanalysis_tool.png)
 
-Recovered AES key (hex): 6c7578696f5f756e6c6f636b735f34e3
-**Encryption Details**
-- Encryption Mode: AES-CBC
+---
+
+### Level 3 - Monoalphabetic Substitution Ciphers (10-14)
+
+Monoalphabetic ciphers use a fixed letter mapping rather than a shift, creating a much larger keyspace (26! possible mappings). Simple brute-force is infeasible -- frequency analysis and linguistic pattern matching are required.
+
+**Decryption process:**
+
+1. Frequency analysis performed to identify high-frequency letters (E, T, A, O, I, N)
+2. Common digraphs (TH, HE) and trigrams (THE, ING, AND) used to anchor the mapping
+3. CrypTool 2 automated substitution analyzer generated candidate mappings
+4. Mappings refined manually using word pattern recognition until coherent plaintext emerged
+
+![CrypTool - Substitution Analysis](03_CrypTool.png)
+
+![CrypTool - Refined Mapping](04_CrypTool.png)
+
+---
+
+## AES Key Recovery Challenge
+
+The final exercise involved recovering an AES encryption key with one unknown byte through brute-force and binary signature matching.
+
+**Setup:**
+- Encryption mode: AES-CBC
 - IV: 16 null bytes
-- Ciphertext Encoding: Base64
-After successful decryption, the output file was identified as a UPX-compressed PE32 executable.
+- Ciphertext encoding: Base64
+- Known: 15 of 16 key bytes
+- Unknown: final byte (256 possible values)
 
-**File Analysis Tools**
-- hexdump
-- file
-- strings
-These tools confirmed the executable structure and provided insight into the decrypted binary.
+**Recovery method:**
 
-## Cryptanalysis Concepts Demonstrated
-**Substitution vs Transposition Ciphers**
-Substitution ciphers replace characters while preserving position, meaning letter frequency distributions remain similar to plaintext.
+Each of the 256 possible final byte values was tested. The correct key was identified by checking each decrypted output for the Windows PE file header (`MZ` / `4D 5A`).
 
-Transposition ciphers rearrange characters without altering them, meaning letter frequencies remain identical to the original text, but word structure is disrupted.
+```
+Recovered AES key (hex): 6c7578696f5f756e6c6f636b735f34e3
+```
 
-Techniques used to identify cipher types included:
-- Frequency analysis
-- Index of coincidence (IC)
-- Pattern recognition
+Post-decryption binary inspection confirmed the output was a UPX-compressed PE32 executable.
 
-## Breaking Simple Ciphers
-The general approach to breaking classical ciphers includes:
-1. Identifying cipher type using statistical analysis
-2. Performing frequency analysis
-3. Testing common cipher techniques (Caesar, substitution, Vigenère)
-4. Using automated cryptanalysis tools
-5. Refining results through manual pattern recognition
-This structured approach allows analysts to efficiently narrow down possible encryption methods and recover plaintext.
+```bash
+hexdump -C output.bin | head
+file output.bin
+strings output.bin | head -20
+```
+
+---
+
+## Cryptanalysis Concepts
+
+### Substitution vs Transposition
+
+| Property | Substitution | Transposition |
+|---|---|---|
+| Characters | Replaced | Rearranged |
+| Letter frequencies | Preserved (shifted) | Identical to plaintext |
+| Word structure | Disrupted | Partially preserved |
+| Detection method | Frequency analysis | Index of coincidence |
+
+### Breaking Classical Ciphers - General Approach
+
+1. Compute letter frequency distribution and index of coincidence
+2. Identify cipher type (Caesar, Vigenere, monoalphabetic, transposition)
+3. Apply brute-force for small keyspace ciphers (Caesar = 25 keys)
+4. Use frequency analysis and linguistic patterns for substitution ciphers
+5. Refine with automated tools, confirm with readable plaintext
+
+---
+
+## Key Takeaway
+
+Classical ciphers fail because they preserve statistical properties of natural language. Frequency analysis exploits this directly - English text has predictable letter distributions, and any cipher that does not destroy those distributions is fundamentally breakable. The AES challenge reinforced how even modern encryption becomes trivial to break when key management is weak.
+
+---
 
 ## Skills Demonstrated
-- Cryptanalysis techniques
-- Classical cipher decryption
-- Frequency analysis
-- Use of cryptographic analysis tools
-- AES encryption analysis
-- Binary inspection and reverse engineering basics
 
-## Author
-Durga Sai Sri Ramireddy </br>
-Master’s Student - Cybersecurity </br>
-University of Houston
+`Cryptanalysis` `Frequency Analysis` `Caesar Cipher Decryption` `Monoalphabetic Substitution Analysis` `AES Key Recovery` `Binary Inspection` `CrypTool 2` `OpenSSL` `Pattern Recognition`
 
+---
 
-*This project was developed as part of academic coursework and expanded for cybersecurity portfolio demonstration.*
+> This lab was developed as part of academic coursework and expanded for cybersecurity portfolio demonstration.
+
+**Author:** Durga Sai Sri Ramireddy | MS Cybersecurity, University of Houston  
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0072b1?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/durga-ramireddy)
+[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/DurgaRamireddy)
